@@ -158,3 +158,17 @@ pnpm check:ai         # Complete validation pipeline (type-check + lint + test +
 - **Testing**: Separate test environments for frontend (jsdom) and backend (node)
 - **Validation**: `pnpm check:ai` runs complete pipeline before commits
 - **Extensions**: Load `dist/` folder as unpacked extension for testing
+
+## Agent skills
+
+### Issue tracker
+
+Issues and specs for this repo live as GitHub issues; use the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Use the canonical triage labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, and `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+This is a single-context repo; read the root `CONTEXT.md` and relevant ADRs under `docs/adr/`. See `docs/agents/domain.md`.
