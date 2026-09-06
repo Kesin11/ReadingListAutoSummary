@@ -25,12 +25,12 @@
     "@tailwindcss/vite": "4.3.3",
     "@types/chrome": "0.2.8",
     "@types/node": "25.9.5",
-    "@vitest/coverage-v8": "4.1.11",
+    "@vitest/coverage-v8": "5.0.0",
     "jsdom": "30.0.1",
     "tailwindcss": "4.3.3",
     "typescript": "7.0.2",
     "vite": "8.2.2",
-    "vitest": "4.1.11"
+    "vitest": "5.0.0"
   },
   "dependencies": {
     "@mizchi/readability": "^0.7.7",
