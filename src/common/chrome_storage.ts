@@ -831,7 +831,7 @@ export function validateSettings(settings: Partial<Settings>): {
   ) {
     try {
       const url = new URL(normalizedSettings.slackWebhookUrl);
-      if (!url.hostname.includes("hooks.slack.com")) {
+      if (url.protocol !== "https:" || url.hostname !== "hooks.slack.com") {
         errors.push("Slack Webhook URLはSlackの正しいURLで入力してください");
       }
     } catch {
