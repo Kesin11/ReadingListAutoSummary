@@ -187,12 +187,14 @@ records so the next run can reconcile them rather than relaunch them.
 
 ## 6. Persist and report
 
-Record completed work and unresolved items locally. For cross-run visibility,
-create or update one GitHub issue titled `[Maintenance report] YYYY-MM-DD`
-containing `<!-- repository-maintenance-report -->`, with links to changes,
-tests, deferral reasons and concrete recheck dates. Search for today's record
-before creating it; never expose credentials, local private paths or secret
-scanning contents in public reports.
+Record completed work and unresolved items in the local operational records
+from step 1. Put the run's Japanese report in the VS Code Copilot manager
+session so it is available in Automation session history. Do not create or
+update GitHub issues or comments solely to publish a maintenance run report.
+This does not prevent necessary replies to actual issue or PR discussions.
+On later runs, reconcile the local task records and consult the linked prior
+session reports when needed; do not depend on a public reporting issue.
+Never include credentials or secret scanning contents in reports.
 
 Report in Japanese:
 
