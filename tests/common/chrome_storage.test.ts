@@ -299,6 +299,45 @@ describe("chrome_storage", () => {
       );
     });
 
+    it("正規のHTTPS hooks.slack.com URLは受け入れる", () => {
+      for (const slackWebhookUrl of [
+        "https://hooks.slack.com/services/T000/B000/XXXX",
+        "https://HOOKS.SLACK.COM/services/T000/B000/XXXX",
+      ]) {
+        const { errors } = validateSettings({
+          ...baseSettings,
+          slackWebhookUrl,
+        });
+
+        expect(errors).not.toContain(
+          "Slack Webhook URLはSlackの正しいURLで入力してください",
+        );
+        expect(errors).not.toContain(
+          "Slack Webhook URLは有効なURLで入力してください",
+        );
+      }
+    });
+
+    it.each([
+      "https://hooks.slack.com.evil.example/services/T000/B000/XXXX",
+      "https://evilhooks.slack.com/services/T000/B000/XXXX",
+      "https://evil-hooks.slack.com.attacker.test/services/x",
+      "https://attacker.test/hooks.slack.com/services/x",
+      "https://attacker.test/?u=https://hooks.slack.com/services/x",
+      "https://hooks.slack.com@attacker.test/services/x",
+      "http://hooks.slack.com/services/T000/B000/XXXX",
+      "ftp://hooks.slack.com/services/T000/B000/XXXX",
+    ])("Slackを装った不正なURL (%s) はエラーを返す", (slackWebhookUrl) => {
+      const { errors } = validateSettings({
+        ...baseSettings,
+        slackWebhookUrl,
+      });
+
+      expect(errors).toContain(
+        "Slack Webhook URLはSlackの正しいURLで入力してください",
+      );
+    });
+
     it("既読化日数の境界値を検証する", () => {
       expect(
         validateSettings({
