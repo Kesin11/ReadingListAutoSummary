@@ -206,7 +206,7 @@ Report in Japanese:
 
 ## Automation entry point
 
-Schedule one local VS Code Automation daily at 09:00 host-local time (JST on the
+Schedule one local VS Code Automation daily at 20:00 host-local time (JST on the
 intended host). It invokes this skill in scheduled mode; Monday and monthly
 scopes above avoid separate overlapping schedules. Authentication and the host
 must remain available; this is not cloud execution.
