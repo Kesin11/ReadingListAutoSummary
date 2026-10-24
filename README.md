@@ -102,6 +102,18 @@ pnpm type-check
 pnpm build
 ```
 
+## 定期メンテナンス
+
+[repository-maintenance skill](.github/skills/repository-maintenance/SKILL.md) に、
+依存更新・GitHubアラート・Issueの対応方針、並列チャットへの委譲、
+PR検証と直列マージ、作業用worktreeの安全な削除をまとめています。
+
+VS CodeのローカルAutomationから毎日09:00（ホストのローカル時刻、想定はJST）に
+このskillを呼び出す運用です。月曜は週末の依存更新、月初は長期保留なども確認します。
+Automation設定はリポジトリには保存されず、ホストの稼働とGitHub認証が必要です。
+skillがデフォルトブランチに入るまでは、Automationは変更を行わず保留します。
+リリース・タグ作成・ストア公開は対象外です。
+
 ## 使用技術
 
 - Chrome Extension (Manifest V3)
