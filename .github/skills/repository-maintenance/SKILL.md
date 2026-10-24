@@ -107,8 +107,9 @@ sessions. Save the full returned chat URI; the chat ID is needed for results.
 
 Confirm the worker reports a different git root and branch before accepting
 edits. Record both. Supply the task key, precise scope, target SHA, allowed
-actions, completion criteria and policy. Workers fix, test, commit, push and open
-a PR, but do not merge or start nested workers.
+actions, completion criteria and policy. Workers fix, test, self-review the final
+diff before opening a PR, and address requested Copilot reviews after opening it.
+They do not merge or start nested workers.
 
 Monitor with `get_session_context` on the exact chat URI. Distinguish complete,
 running, approval-blocked and failed work. Use `send_message` for same-task
@@ -118,8 +119,28 @@ poll or duplicate their implementation.
 ## 4. Review and merge serially
 
 1. Collect the PR URL, exact tested SHA, test evidence and clean/pushed status.
+   Require the worker's pre-PR self-review result, including findings and their
+   disposition; passing tests alone do not constitute self-review.
    Review the actual diff for scope and regressions; confirm required CI on the
    current PR head and browser evidence when applicable.
+   After PR creation and each push, inspect review requests, submitted reviews,
+   review threads and review-related check runs for Copilot review activity.
+   If a Copilot review was requested or is running, wait for its response before
+   merging, even if review approval is not required by branch protection.
+   No pending request alone does not prove completion: requests can disappear
+   when review starts. Record the requested/reviewed SHA and review IDs.
+   Assess every Copilot comment. Have the worker fix valid findings, add tests
+   as appropriate, revalidate and reply with the fix. For an invalid or
+   inapplicable suggestion, reply in its thread with a concrete explanation
+   and leave the code unchanged. Do not mechanically accept every suggestion
+   or resolve threads without a recorded disposition.
+   Recheck review state before merge, especially after new commits; an older
+   review does not satisfy a newly requested review. Do not request Copilot
+   review solely because it is absent: this wait applies when it is requested.
+   If the response does not arrive within the run's available time, persist a
+   pending-review task and resume later without merging or reporting completion.
+   Release a worker/worktree only after its review work is complete or explicitly
+   handed back as pending; recreate its worktree for follow-up if needed.
 2. Merge only eligible, non-draft PRs with no unresolved required reviews or
    checks. Use the repository's merge method and `--match-head-commit` with the
    reviewed SHA. If the head changed, reassess and revalidate.
@@ -177,6 +198,8 @@ Report in Japanese:
 
 - Scope and baseline SHA; completed/merged PRs and verification results.
 - Each worker's task key, chat link, branch, outcome and cleanup result.
+- Pre-PR self-review results and Copilot review status, comment dispositions,
+  replies and any pending review.
 - Remaining alerts/issues, applicability assessment, next action and recheck date.
 - Default-branch health and alert reconciliation still pending.
 - Owner decisions required and any operational blockers.

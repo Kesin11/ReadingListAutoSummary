@@ -27,14 +27,29 @@ in every worker prompt. The worker does not inherit the manager's conversation.
 5. For dependencies major updates, run only the lightweight extension smoke
    test from SKILL.md. Use a dedicated profile and dummy settings. Never invoke
    real Reading List processing, Slack, LLM or Tavily services.
-6. Commit in English with:
+6. Before creating a PR, self-review the complete final diff against the intended
+   base, including new files. Check correctness, regressions, edge cases, test
+   coverage, unintended scope and sensitive data. Fix valid findings, rerun
+   affected validation and re-review the resulting diff. Record what was checked,
+   findings and their disposition, including when there were no findings.
+   Do this yourself; tests and a future Copilot review do not replace it.
+7. Commit in English with:
    `Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>`.
    Push and create a Japanese PR title/body with a task-key marker:
    `<!-- repository-maintenance: TASK-KEY -->`.
    Prefer gh CLI; use `gh api --method GET` for reads.
-7. Do not merge, release, tag, publish, expand permissions, start child workers,
+8. After creating the PR or pushing follow-up changes, inspect Copilot review
+   requests, reviews, threads and review-related checks. If requested or running,
+   wait for the response, then judge every comment on its merits. Fix valid
+   findings with appropriate tests, self-review and revalidate before pushing;
+   reply in the thread with the change. Reply to invalid or inapplicable comments
+   with a specific reason for not changing the code. Do not accept all suggestions
+   automatically or silently ignore them. Track new review requests after pushes.
+   If the review is still pending when execution time runs out, report the
+   request/head state and hand it back to the manager as pending, not merge-ready.
+9. Do not merge, release, tag, publish, expand permissions, start child workers,
    delete worktrees, or operate on other workers' branches/processes.
-8. Stop task-owned browsers, servers and watchers. Release terminal cwd where
+10. Stop task-owned browsers, servers and watchers. Release terminal cwd where
    possible. Do not claim process cleanup if a host terminal still holds cwd;
    give its exact PID and ownership evidence to the manager.
 
@@ -43,6 +58,9 @@ in every worker prompt. The worker does not inherit the manager's conversation.
 - Task key; starting and final SHA; absolute worktree; branch.
 - PR URL or reason none was created; tested PR head SHA.
 - Tests run, results, regression reproduction and smoke evidence as applicable.
+- Pre-PR self-review scope, findings and disposition.
+- Copilot review requested/running/completed/not requested, reviewed SHA,
+  comment-by-comment decisions and reply links, or pending-review handoff.
 - Git status including untracked files; ignored generated output.
 - Remote branch SHA proving the work is pushed.
 - Task-owned process IDs and stopped/released status.
