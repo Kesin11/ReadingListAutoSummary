@@ -1,4 +1,5 @@
 ---
+
 name: repository-maintenance
 description: "Maintain ReadingListAutoSummary through scheduled or manual repository maintenance. Use for maintenance patrols, Renovate and Dependabot backlog, existing GitHub security/quality alerts, Kesin11 issues, and coordinating isolated parallel chats, PR verification, serial merges, and safe worktree cleanup."
 ---
@@ -18,6 +19,9 @@ Use Japanese for reports and PR titles/descriptions; English for commit messages
 - Respect existing Renovate configuration, inherited presets, minimum release
   age, schedules, and pending checks. `autoMergeRequest: null` does not imply
   failure: Renovate may perform merges itself (`platformAutomerge: false`).
+- Keep Renovate/Dependabot PR titles, generated bodies and branches bot-owned.
+  Do not rewrite their metadata or commit/push repairs to their branches.
+  Assessing, reviewing and merging eligible bot PRs remains allowed.
 - `devDependencies`, development tools such as pnpm/Node, and GitHub Actions
   updates, including major versions, can merge after CI passes, consistent with
   the existing Renovate policy. Additional browser testing is not required.
@@ -53,8 +57,10 @@ Use Japanese for reports and PR titles/descriptions; English for commit messages
    `create_session`, `get_session_context`, `list_sessions`, `send_message`.
    If unavailable, report that orchestration is blocked rather than silently
    replacing independent chats with in-place edits.
-3. Use `<absolute-git-common-dir>/repository-maintenance/` for local operational
-   JSON records (not committed). Acquire a single-run lock with atomic directory
+3. The manager alone writes local operational JSON records (not committed) in
+   `<absolute-git-common-dir>/repository-maintenance/`. Workers report via chat;
+   they do not write shared operational records or another worktree's `.git`.
+   The manager acquires a single-run lock with atomic directory
    creation before making GitHub changes or starting workers. Record the owner
    session URI, time and repo. A second manager reports the active run and exits.
    Reclaim a stale lock only after confirming the prior manager and all recorded
@@ -72,7 +78,6 @@ Use Japanese for reports and PR titles/descriptions; English for commit messages
 
 Prefer `gh` CLI; explicitly use `gh api --method GET` for reads. Paginate lists
 and check completeness. Permission errors mean unknown, not zero findings.
-
 - Check latest default-branch CI, CodeQL analysis freshness and workflow failures.
   CodeQL success means analysis ran, not that open alerts are absent.
 - List open Renovate/Dependabot PRs, check rollups, dependency dashboard warnings,
@@ -94,9 +99,14 @@ and check completeness. Permission errors mean unknown, not zero findings.
 Prioritize default-branch failures and relevant security fixes, then stuck
 updates and owner issues. Group tightly coupled lockfile changes into one task.
 Run at most two workers concurrently. Serialize overlapping dependency/lockfile
-updates. Give each item a stable task key and reuse an existing PR/task instead
-of creating duplicates. Close a superseded update only after confirming that
-the newer version really landed; never merge a stale downgrade PR.
+updates. Give each item a stable task key and reuse an existing agent-owned
+repair PR/task instead of creating duplicates; bot-owned PRs are not repair
+targets. Fix bot PR CI on a separate agent-owned branch in a dedicated new PR
+referencing the source bot PR, preserving its original metadata and branch.
+Use a prerequisite repair against main when compatible; when the repair needs
+the new version, propose a replacement update plus fix instead. Defer the source
+bot PR until the repair lands, and close a superseded update only after confirming
+the replacement update actually landed; never merge a stale downgrade PR.
 
 ## 3. Delegate real work
 
@@ -144,6 +154,8 @@ poll or duplicate their implementation.
 2. Merge only eligible, non-draft PRs with no unresolved required reviews or
    checks. Use the repository's merge method and `--match-head-commit` with the
    reviewed SHA. If the head changed, reassess and revalidate.
+   Keep PRs changing this skill or Automation instructions in draft for owner
+   review; do not automatically merge them.
 3. Make one merge at a time. Confirm default-branch CI for that merge before the
    next merge. A failure stops subsequent merges and becomes the next repair task.
 4. Confirm scanning on the resulting default-branch SHA. Security alert indexing
@@ -154,7 +166,6 @@ poll or duplicate their implementation.
 
 The manager owns cleanup; a worker must not remove its own working directory.
 Cleanup is allowed after PR creation and push, even while the PR remains open.
-
 1. Confirm the exact chat is complete, record its final report, and stop its
    browser/server/watchers. Ask it to release its tool shells if necessary.
 2. Confirm the path is a registered, task-owned worktree, distinct from the main
@@ -187,8 +198,9 @@ records so the next run can reconcile them rather than relaunch them.
 
 ## 6. Persist and report
 
-Record completed work and unresolved items in the local operational records
-from step 1. Put the run's Japanese report in the VS Code Copilot manager
+Workers report completion and unresolved items via chat only. The manager
+records them in the local operational records from step 1.
+Put the run's Japanese report in the VS Code Copilot manager
 session so it is available in Automation session history. Do not create or
 update GitHub issues or comments solely to publish a maintenance run report.
 This does not prevent necessary replies to actual issue or PR discussions.
@@ -197,7 +209,6 @@ session reports when needed; do not depend on a public reporting issue.
 Never include credentials or secret scanning contents in reports.
 
 Report in Japanese:
-
 - Scope and baseline SHA; completed/merged PRs and verification results.
 - Each worker's task key, chat link, branch, outcome and cleanup result.
 - Pre-PR self-review results and Copilot review status, comment dispositions,
