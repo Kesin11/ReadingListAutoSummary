@@ -20,7 +20,6 @@ Chrome の Reading List を定期処理し、古い未読記事を既読化し�
 ## 本文抽出の挙動
 
 オプション画面では以下の本文抽出モードを選べます。
-
 1. **ローカル + Tavilyフォールバック（既定）**
    - 拡張機能が対象 URL の HTML を直接取得します
    - `@mizchi/readability` で本文を Markdown 化します
@@ -36,13 +35,11 @@ Chrome の Reading List を定期処理し、古い未読記事を既読化し�
 ## Chrome 権限
 
 ローカルで記事 HTML を取得するため、manifest では広めのホスト権限を使います。
-
 - `https://*/*`
 - `http://*/*`
 - `https://hooks.slack.com/*`
 
 通常の拡張権限は以下です。
-
 - `storage`
 - `readingList`
 - `alarms`
@@ -50,7 +47,6 @@ Chrome の Reading List を定期処理し、古い未読記事を既読化し�
 ## 設定項目
 
 オプション画面では主に以下を設定します。
-
 - 既読化までの日数
 - 削除までの日数
 - 1 回の実行で既読にする最大件数
@@ -88,7 +84,6 @@ node scripts/validate-readability.mjs https://example.com/article
 ```
 
 このスクリプトは以下を確認します。
-
 - HTML 取得成功/失敗
 - アクセスブロックらしきレスポンス
 - readability の抽出成功/失敗

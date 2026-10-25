@@ -50,8 +50,8 @@ in every worker prompt. The worker does not inherit the manager's conversation.
 9. Do not merge, release, tag, publish, expand permissions, start child workers,
    delete worktrees, or operate on other workers' branches/processes.
 10. Stop task-owned browsers, servers and watchers. Release terminal cwd where
-   possible. Do not claim process cleanup if a host terminal still holds cwd;
-   give its exact PID and ownership evidence to the manager.
+    possible. Do not claim process cleanup if a host terminal still holds cwd;
+    give its exact PID and ownership evidence to the manager.
 
 ## Final report
 
