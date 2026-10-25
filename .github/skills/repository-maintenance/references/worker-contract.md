@@ -17,8 +17,15 @@ in every worker prompt. The worker does not inherit the manager's conversation.
 1. Report cwd, git root, branch and starting SHA. Stop if not isolated from the
    original checkout. Fetch and start from the assigned current baseline; for an
    existing PR, validate its exact head on your own branch.
-2. Check existing related PRs/tasks. Reuse the existing PR where appropriate;
-   report ownership conflicts rather than pushing over another task.
+2. Check existing related PRs/tasks. Reuse an existing agent-owned repair PR
+   for the same task, never a bot-owned PR as a repair target. Keep Renovate and
+   Dependabot titles, generated bodies and branches bot-owned: do not rewrite
+   metadata or commit/push repairs there. Create a dedicated repair PR from a
+   separate agent-owned branch referencing the source bot PR. Use a prerequisite
+   fix against main when compatible, or a replacement update plus fix when the
+   repair depends on the new version. Defer the source bot PR; only the manager
+   may close it after the replacement update lands, never merge a stale downgrade.
+   Assessing and reviewing bot PRs remains allowed; report ownership conflicts.
 3. Implement only the assigned fix, add regression tests, and update directly
    related documentation. Use pnpm. Do not mock console methods.
 4. Run targeted tests and `pnpm check:ai` before committing. That command may
@@ -37,6 +44,9 @@ in every worker prompt. The worker does not inherit the manager's conversation.
    `Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>`.
    Push and create a Japanese PR title/body with a task-key marker:
    `<!-- repository-maintenance: TASK-KEY -->`.
+   Push only the agent-owned repair branch. Create PRs changing the maintenance
+   skill or Automation instructions as drafts requiring owner review; they must
+   not be automatically merged.
    Prefer gh CLI; use `gh api --method GET` for reads.
 8. After creating the PR or pushing follow-up changes, inspect Copilot review
    requests, reviews, threads and review-related checks. If requested or running,
@@ -49,6 +59,8 @@ in every worker prompt. The worker does not inherit the manager's conversation.
    request/head state and hand it back to the manager as pending, not merge-ready.
 9. Do not merge, release, tag, publish, expand permissions, start child workers,
    delete worktrees, or operate on other workers' branches/processes.
+   Report results via chat only. The manager alone writes shared operational
+   records; do not write those records or another worktree's `.git`.
 10. Stop task-owned browsers, servers and watchers. Release terminal cwd where
     possible. Do not claim process cleanup if a host terminal still holds cwd;
     give its exact PID and ownership evidence to the manager.
