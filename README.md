@@ -95,7 +95,15 @@ node scripts/validate-readability.mjs https://example.com/article
 pnpm test
 pnpm type-check
 pnpm build
+pnpm check:ai
+pnpm biome:ci
 ```
+
+YAML・Markdown を含む手書きファイルは Biome の標準フォーマットに従います。
+`pnpm-lock.yaml` のみ、依存更新時に pnpm が引用符・空行・フローマッピングを
+独自の形式で再生成するため、Biome のフォーマット対象から除外します。
+YAML 全体のチェックや lint は無効化しません。ロックファイルは手で整形せず、
+依存更新には pnpm を使用し、`pnpm install --frozen-lockfile` で整合性を確認してください。
 
 ## 使用技術
 
