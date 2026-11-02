@@ -271,6 +271,18 @@ describe("summarizer", () => {
       );
     });
 
+    it("Service Worker上で動作させるためdangerouslyAllowBrowserを有効にしてOpenAIクライアントを生成する", async () => {
+      mockCreate.mockResolvedValue({
+        choices: [{ message: { content: "要約" } }],
+      });
+
+      await summarizeTestContent();
+
+      expect(mockOpenAIConstructor).toHaveBeenCalledWith(
+        expect.objectContaining({ dangerouslyAllowBrowser: true }),
+      );
+    });
+
     it("configにタイムアウトが指定された場合はそれをOpenAIクライアントに渡す", async () => {
       const customTimeout = 30_000;
       mockCreate.mockResolvedValue({

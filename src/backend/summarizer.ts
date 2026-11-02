@@ -122,6 +122,9 @@ export async function summarizeContent(
     baseURL: config.endpoint,
     apiKey: config.apiKey,
     timeout: config.timeout ?? DEFAULT_SUMMARIZE_TIMEOUT_MS,
+    // openai SDK 7.5.0以降はService Workerもブラウザ環境とみなして例外を投げる。
+    // APIキーは利用者自身が設定し拡張機能内でのみ使うため、Webページ経由の漏洩リスクは無い。
+    dangerouslyAllowBrowser: true,
   });
   const userPrompt = `以下のWebページを要約してください：\n\nタイトル: ${title}\nURL: ${url}\n\n内容:\n${content}`;
 
