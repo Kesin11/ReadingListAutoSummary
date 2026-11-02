@@ -105,6 +105,15 @@ YAML・Markdown を含む手書きファイルは Biome の標準フォーマッ
 YAML 全体のチェックや lint は無効化しません。ロックファイルは手で整形せず、
 依存更新には pnpm を使用し、`pnpm install --frozen-lockfile` で整合性を確認してください。
 
+### E2E スモークテスト（Playwright）
+
+ビルドした `dist/` をヘッドレスの Chromium に読み込み、外部サービス（LLM、記事ページ、Slack）をモックにして主要なシナリオを確認します。
+
+```bash
+pnpm exec playwright install chromium  # 初回のみ
+pnpm e2e:build                         # ビルドしてから E2E を実行
+```
+
 ## 使用技術
 
 - Chrome Extension (Manifest V3)

@@ -28,6 +28,8 @@ pnpm build            # Production build
 pnpm build:release    # Production build + zip for Chrome Web Store
 pnpm test             # Run all tests (--silent flag)
 pnpm test:ci          # Run tests with coverage reporting
+pnpm e2e              # Run Playwright E2E smoke tests against built dist/ (run pnpm build first)
+pnpm e2e:build        # Build then run E2E tests
 pnpm type-check       # TypeScript type checking (tsc --noEmit)
 pnpm biome            # Check code formatting and linting
 pnpm biome:fix        # Auto-fix code formatting and linting issues
@@ -90,10 +92,16 @@ pnpm check:ai         # Complete validation pipeline (type-check + lint + test +
   - Frontend tests: `tests/frontend/**/*.test.ts`
   - Backend tests: `tests/backend/**/*.test.ts`
   - Common utilities: `tests/common/**/*.test.ts`
+  - E2E smoke tests: `e2e/**/*.spec.ts` (Playwright, not run by Vitest)
 - **Key Settings**:
   - Watch mode disabled (`watch: false`) for AI compatibility
   - Silent mode enabled for cleaner output
   - Coverage available via `test:ci`
+- **E2E (Playwright)**:
+  - Loads built `dist/` into headless bundled Chromium (`channel: "chromium"`) with a fresh profile per test (`e2e/fixtures.ts`)
+  - All external HTTP(S) (LLM, article pages, Slack) is mocked via `context.route()` in `e2e/mocks.ts`; unmocked hosts are aborted
+  - Old entries are simulated by shifting `Date.now` inside the service worker (`advanceServiceWorkerClock` in `e2e/helpers.ts`)
+  - First-time setup: `pnpm exec playwright install chromium`
 - **Console Methods**: Do not mock `console.log`, `console.error` etc. in tests
 
 ### Code Quality Tools
