@@ -1,6 +1,6 @@
 import type { BrowserContext } from "@playwright/test";
 
-// 外部サービスのダミーホスト。.test は RFC 2606 の予約ドメインで実在しない
+// 外部サービスのダミーホスト（RFC 2606 で予約された実在しない .test ドメイン）
 export const MOCK_LLM_ENDPOINT = "https://llm.example.test/v1";
 export const MOCK_LLM_MODEL = "mock-model";
 export const MOCK_ARTICLE_URL = "https://article.example.test/posts/1";
