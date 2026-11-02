@@ -1,8 +1,9 @@
-import type { Page } from "@playwright/test";
+import type { Page, Worker } from "@playwright/test";
 import { expect, test } from "./fixtures";
 import {
   addReadingListEntry,
   advanceServiceWorkerClock,
+  getLatestSessionLog,
   getReadingListEntries,
   MOCK_SETTINGS,
   seedSettings,
@@ -14,11 +15,24 @@ import {
   MOCK_SUMMARY,
 } from "./mocks";
 
-async function runManually(optionsPage: Page): Promise<void> {
+/**
+ * 「今すぐ実行」を押して処理の完了を待つ。
+ * MANUAL_EXECUTE は処理中のエラーをセッションログに記録して常に成功を返すため、
+ * セッションログにもエラーが無く完了していることを確認する。
+ */
+async function runManually(
+  optionsPage: Page,
+  serviceWorker: Worker,
+): Promise<void> {
   await optionsPage.getByRole("button", { name: "今すぐ実行" }).click();
   await expect(optionsPage.getByText("実行が完了しました")).toBeVisible({
     timeout: 30_000,
   });
+
+  const sessionLog = await getLatestSessionLog(serviceWorker);
+  const eventTypes = sessionLog?.events.map((event) => event.type) ?? [];
+  expect(eventTypes).toContain("session-complete");
+  expect(eventTypes).not.toContain("session-error");
 }
 
 test.describe("リーディングリストの自動処理（今すぐ実行）", () => {
@@ -38,7 +52,7 @@ test.describe("リーディングリストの自動処理（今すぐ実行）",
       MOCK_SETTINGS.daysUntilRead + 1,
     );
 
-    await runManually(optionsPage);
+    await runManually(optionsPage, serviceWorker);
 
     expect(mocks.llmRequests).toHaveLength(1);
     expect(mocks.llmRequests[0]).toMatchObject({ model: MOCK_LLM_MODEL });
@@ -64,7 +78,7 @@ test.describe("リーディングリストの自動処理（今すぐ実行）",
       hasBeenRead: false,
     });
 
-    await runManually(optionsPage);
+    await runManually(optionsPage, serviceWorker);
 
     expect(mocks.llmRequests).toHaveLength(0);
     expect(mocks.slackMessages).toHaveLength(0);
@@ -91,12 +105,18 @@ test.describe("リーディングリストの自動処理（今すぐ実行）",
       MOCK_SETTINGS.daysUntilRead + 1,
     );
 
-    await runManually(optionsPage);
+    await runManually(optionsPage, serviceWorker);
 
     expect(mocks.llmRequests).toHaveLength(0);
     expect(mocks.slackMessages).toHaveLength(1);
     expect(mocks.slackMessages[0]).toContain(`*${MOCK_ARTICLE_TITLE}*`);
     expect(mocks.slackMessages[0]).toContain("本文抽出失敗");
+
+    // エラーを通知したエントリも既読化して、毎回同じエントリで失敗し続けないようにする
+    const entries = await getReadingListEntries(serviceWorker);
+    expect(entries).toEqual([
+      expect.objectContaining({ url: MOCK_ARTICLE_URL, hasBeenRead: true }),
+    ]);
   });
 
   test("削除までの日数を過ぎた既読エントリを削除する", async ({
@@ -115,7 +135,7 @@ test.describe("リーディングリストの自動処理（今すぐ実行）",
       MOCK_SETTINGS.daysUntilDelete + 1,
     );
 
-    await runManually(optionsPage);
+    await runManually(optionsPage, serviceWorker);
 
     expect(await getReadingListEntries(serviceWorker)).toEqual([]);
     expect(mocks.llmRequests).toHaveLength(0);

@@ -1,5 +1,5 @@
 import type { Worker } from "@playwright/test";
-import type { Settings } from "../src/common/chrome_storage";
+import type { SessionLog, Settings } from "../src/common/chrome_storage";
 import {
   MOCK_LLM_ENDPOINT,
   MOCK_LLM_MODEL,
@@ -52,6 +52,28 @@ export async function getReadingListEntries(
   serviceWorker: Worker,
 ): Promise<chrome.readingList.ReadingListEntry[]> {
   return serviceWorker.evaluate(() => chrome.readingList.query({}));
+}
+
+/** 最新のセッションログを取得する */
+export async function getLatestSessionLog(
+  serviceWorker: Worker,
+): Promise<SessionLog | undefined> {
+  return serviceWorker.evaluate(async () => {
+    const { sessionLogIndex } =
+      await chrome.storage.local.get("sessionLogIndex");
+    const latestId = Array.isArray(sessionLogIndex)
+      ? sessionLogIndex.at(-1)
+      : undefined;
+    if (typeof latestId !== "string") {
+      return undefined;
+    }
+    const key = `sessionLog:${latestId}`;
+    const stored =
+      await chrome.storage.local.get<Record<string, SessionLog | undefined>>(
+        key,
+      );
+    return stored[key];
+  });
 }
 
 /**
