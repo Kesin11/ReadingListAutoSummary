@@ -30,6 +30,11 @@ Use Japanese for reports and PR titles/descriptions; English for commit messages
   retaining them after reload, and service worker startup without errors.
   Use the `chrome-extension-playwright-cli` skill when available. Use an isolated
   browser profile with no real reading-list entries or credentials.
+- An existing Playwright E2E suite can satisfy this smoke-test gate when it runs
+  against the candidate update (or a test merge with the latest default branch)
+  in an isolated profile and covers every listed behavior. Record the tested
+  PR head, base SHA, and results; do not treat unrelated integration coverage
+  as a substitute for any missing smoke-test behavior.
 - Do not add Reading List processing, Slack posting, LLM/Tavily requests, or
   dependency-specific processing to that E2E requirement. Mocked integration E2E
   is not required either. Existing unit tests cover those paths.
@@ -42,6 +47,15 @@ Use Japanese for reports and PR titles/descriptions; English for commit messages
   exposure. A CLI script is not a server merely because a scanner calls a URL
   fetch SSRF. Do not dismiss an alert just to reduce the count; document evidence
   and defer uncertain dismissals for owner review.
+- For each CodeQL alert, trace the source-to-sink path and check call sites,
+  trust boundaries, and whether an untrusted remote actor can reach the code.
+  Remediate confirmed vulnerabilities and verify the resulting scan. If the
+  evidence clearly shows the finding is inapplicable (for example, an intentional
+  local CLI with no remotely reachable invocation), record the exact evidence
+  and dismiss it with the accurate reason and a concise explanation. If
+  applicability or impact is uncertain, leave it open for owner review rather
+  than guessing or changing behavior just to silence the alert. Verify the
+  alert's resulting state separately from CodeQL analysis success.
 - Do not introduce permissions, destructive data behavior, new external data
   destinations, spending, or substantial feature changes without owner approval.
   Do not use real secrets or invoke paid/external integrations for validation.
