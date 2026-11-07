@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@mizchi/readability": "^0.7.7",
-    "openai": "^7.45.1",
+    "openai": "^7.50.0",
     "preact": "^11.1.1",
     "unpdf": "^2.1.0"
   }
