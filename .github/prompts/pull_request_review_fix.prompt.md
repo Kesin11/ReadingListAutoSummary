@@ -7,6 +7,7 @@ description: 'pull_requestのレビューコメントを確認し、必要な修
 ## Steps
 
 以下の手順に従って、pull_requestのレビューコメントを確認し、必要な修正やコメント返信を行ってください。
+
 1. 与えられたpull_requestのレビューコメントの取得と分類
    - レビューコメントと通常のコメントを `github` を使用して確認する。 `github` が利用できない場合は `gh` コマンドを代わりに使用する
    - resolved済みのレビューコメントは無視
@@ -36,6 +37,7 @@ description: 'pull_requestのレビューコメントを確認し、必要な修
 
 実装後にpull requestを作成する前には必ずcheck allを行ってください。
 lintやformatの修正にはfix lintやfix formatを使用してください。
+
 - check all: `pnpm check:ai`
 - fix lint: `pnpm biome:fix`
 - fix format: `pnpm biome:fix`

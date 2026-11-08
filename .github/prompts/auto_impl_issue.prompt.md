@@ -38,6 +38,7 @@ Planning -> Actionの順に作業してください
 
 実装後にpull requestを作成する前には必ずcheck allを行ってください。
 lintやformatの修正にはfix lintやfix formatを使用してください。
+
 - check all: `pnpm check:ai`
 - fix lint: `pnpm biome:fix`
 - fix format: `pnpm biome:fix`

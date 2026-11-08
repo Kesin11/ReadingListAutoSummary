@@ -17,6 +17,7 @@ This is a Chrome extension (Manifest V3) that automatically manages Chrome's Rea
 - **Build System**: Custom Vite config with specialized Chrome extension bundling
 
 The build process uses a unique dual-bundling approach:
+
 1. Main Vite build for frontend components
 2. Secondary `generateStandaloneBundle()` for background script (ES modules format)
 

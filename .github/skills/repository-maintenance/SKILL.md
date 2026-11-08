@@ -92,6 +92,7 @@ Use Japanese for reports and PR titles/descriptions; English for commit messages
 
 Prefer `gh` CLI; explicitly use `gh api --method GET` for reads. Paginate lists
 and check completeness. Permission errors mean unknown, not zero findings.
+
 - Check latest default-branch CI, CodeQL analysis freshness and workflow failures.
   CodeQL success means analysis ran, not that open alerts are absent.
 - List open Renovate/Dependabot PRs, check rollups, dependency dashboard warnings,
@@ -180,6 +181,7 @@ poll or duplicate their implementation.
 
 The manager owns cleanup; a worker must not remove its own working directory.
 Cleanup is allowed after PR creation and push, even while the PR remains open.
+
 1. Confirm the exact chat is complete, record its final report, and stop its
    browser/server/watchers. Ask it to release its tool shells if necessary.
 2. Confirm the path is a registered, task-owned worktree, distinct from the main
@@ -223,6 +225,7 @@ session reports when needed; do not depend on a public reporting issue.
 Never include credentials or secret scanning contents in reports.
 
 Report in Japanese:
+
 - Scope and baseline SHA; completed/merged PRs and verification results.
 - Each worker's task key, chat link, branch, outcome and cleanup result.
 - Pre-PR self-review results and Copilot review status, comment dispositions,
