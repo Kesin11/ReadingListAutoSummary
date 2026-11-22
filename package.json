@@ -39,6 +39,6 @@
     "@mizchi/readability": "^0.7.7",
     "openai": "^7.60.0",
     "preact": "^11.2.0",
-    "unpdf": "^2.1.0"
+    "unpdf": "^2.2.1"
   }
 }
